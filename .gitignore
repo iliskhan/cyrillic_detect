@@ -1,0 +1,8 @@
+*.jpg
+*.npy
+*.png
+*.h5
+
+logs/*
+
+!logs/.gitkeep
