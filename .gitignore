@@ -3,6 +3,12 @@
 *.png
 *.h5
 
-logs/*
+*.txt
 
-!logs/.gitkeep
+*.rar
+*.zip
+
+*.gitkeep
+
+
+logs/*

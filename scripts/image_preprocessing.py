@@ -55,21 +55,22 @@ def main():
     m = 0
     rows, cols = 32, 32
 
-    rotations = 2
+    rotations = 3
 
-    one_char_size = 100
+    one_char_size = 50
     cv_size = one_char_size * 32 * rotations
     test_size = one_char_size * 32 * rotations
 
-    angles = [0, 25, 345]
+    angles = [0, 15, 345]
 
     origin_folder = "../data/preprocessed_data"
     destination_folder = "../data/final_data"
 
 
     for i in os.listdir(origin_folder):
-        if int(i) > 100:
-            m += len(os.listdir(os.path.join(origin_folder, i)))
+        if i.isdigit():
+            if int(i) > 100:
+                m += len(os.listdir(os.path.join(origin_folder, i)))
 
     train_size = m * rotations - test_size - cv_size 
     
@@ -87,41 +88,40 @@ def main():
     counter_cv = 0
 
     for i in os.listdir(origin_folder):
-        int_i = int(i)
-        char = int_i - 1072
 
-        if int_i > 100:
-            img_path = os.path.join(origin_folder, i)
-            len_folder = len(os.listdir(img_path))
-            len_folder_train = len_folder - one_char_size
+        if i.isdigit():
+            int_i = int(i)
+            char = int_i - 1072
 
-            for k, j in tqdm(enumerate(os.listdir(img_path))):
-                
-                path_to_img = os.path.join(img_path, j)
-                
-                if k < one_char_size:
-                    # test_x[counter_test, :, :, 0] = img_process(os.path.join(img_path, j), rows, cols)
-                    # test_y[counter_test] = int_i - 1072
-                    # counter_test += 1
-                    for i in range(rotations):
-                        counter_test = assigner(test_x, test_y, counter_test, path_to_img, rows, cols, char, angles[i])
+            if int_i > 100:
+                img_path = os.path.join(origin_folder, i)
+                len_folder = len(os.listdir(img_path))
+                len_folder_train = len_folder - one_char_size
 
-                elif k >= one_char_size and k < one_char_size * 2:
-                    for i in range(rotations):
-                        counter_cv = assigner(cv_x, cv_y, counter_cv, path_to_img, rows, cols, char, angles[i])
-                
-                else:
-                    # train_x[counter_train, :, :, 0] = img_process(os.path.join(img_path,j), rows, cols)
-                    # train_y[counter_train] = int_i - 1072
-                    # counter_train += 1
-                    for i in range(rotations):
-                        counter_train = assigner(train_x, train_y, counter_train, path_to_img, rows, cols, char, angles[i])
+                for k, j in tqdm(enumerate(os.listdir(img_path))):
+                    
+                    path_to_img = os.path.join(img_path, j)
+                    
+                    if k < one_char_size:
+                        
+                        for i in range(rotations):
+                            counter_test = assigner(test_x, test_y, counter_test, path_to_img, rows, cols, char, angles[i])
+
+                    elif k >= one_char_size and k < one_char_size * 2:
+
+                        for i in range(rotations):
+                            counter_cv = assigner(cv_x, cv_y, counter_cv, path_to_img, rows, cols, char, angles[i])
+                    
+                    else:
+                        
+                        for i in range(rotations):
+                            counter_train = assigner(train_x, train_y, counter_train, path_to_img, rows, cols, char, angles[i])
 
     print(train_y[-1])
     print(test_y[-1])
     print(cv_y[-1])
 
-    np.save(os.path.join(destination_folder, f'data_{rows}x{cols}_rotated={rotations}_cv.npy'), [train_x, train_y, test_x, test_y, cv_x, cv_y])
+    np.save(os.path.join(destination_folder, f'data_{rows}x{cols}_size={m}_rotations={rotations}_cv.npy'), [train_x, train_y, test_x, test_y, cv_x, cv_y])
 
     print('train shape =', train_x.shape)
     print('test shape =', test_x.shape)

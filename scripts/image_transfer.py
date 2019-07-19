@@ -51,5 +51,5 @@ for folder in os.listdir(origin_folder):
 				img.save(f"{os.path.join(destination_folder, str(ord(char_folder.lower())))}/{ord(char_folder.lower())}_{counter}.jpg")
 			
 				counter+=1
-
-				progressbar(counter, size)
+				if counter % 100 ==0:
+					progressbar(counter, size)
